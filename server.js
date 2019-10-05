@@ -1,4 +1,4 @@
-/*jshint esversion: 6 */
+/*jshint esversion: 8 */
 import express from 'express';
 import connectDatabase from './config/db';
 import { check, validationResult } from 'express-validator';

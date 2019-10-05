@@ -1,4 +1,4 @@
-/*jshint esversion: 6 */
+/*jshint esversion: 8 */
 import mongoose from 'mongoose';
 import config from 'config';
 
