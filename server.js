@@ -1,4 +1,3 @@
-activity-4
 /*jshint esversion: 8 */
 import express from 'express';
 import connectDatabase from './config/db';
@@ -13,14 +12,11 @@ connectDatabase();
 
 // Configure Middleware
 app.use(express.json({ extended: false }));
-activity-4
 app.use(
     cors({
         origin: 'http://localhost:3000'
     })
 );
-
-master
 
 // API endpoints
 /**
