@@ -23,10 +23,13 @@ class App extends React.Component {
   render() {
     return (
         <Router>
-            <div classname="App">
-                <header classname="App-header">
+            <div className="App">
+                <header className="App-header">
                     <h1>GoodThings</h1>
                     <ul>
+                        <li>
+                            <Link to="/">Home</Link>
+                        </li>
                         <li>
                             <Link to="/register">Register</Link>
                         </li>
@@ -37,7 +40,7 @@ class App extends React.Component {
                 </header>
                 <main>
                     <Route exact path="/">
-                        {this.state.local}
+                        {this.state.data}
                     </Route>
                     <Switch>
                         <Route path="/register">
@@ -50,7 +53,7 @@ class App extends React.Component {
                 </main>
             </div>
         </Router>
-    )
+    );
 }
 }
 
