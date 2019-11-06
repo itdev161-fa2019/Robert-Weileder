@@ -3,7 +3,24 @@ import './App.css';
 import axios from 'axios';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
-render() {
+class App extends React.Component {
+  state = {
+    data: null
+  }
+
+  componentDidMount() {
+    axios.get('http://localhost:5000')
+      .then((response) => {
+        this.setState({
+          data: response.data
+        })
+      })
+      .catch((error) => {
+        console.error(`Error fetching data: ${error}`);
+      })
+  }
+
+  render() {
     return (
         <Router>
             <div classname="App">
@@ -35,3 +52,6 @@ render() {
         </Router>
     )
 }
+}
+
+export default App;
