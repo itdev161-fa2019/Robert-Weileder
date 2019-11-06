@@ -49,7 +49,6 @@ app.post(
             ).isLength({ min: 6 })
     ],
     async (req, res) => {
-    (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
@@ -97,7 +96,6 @@ app.post(
             } catch (error) {
                 res.status(500).send('Server error');
             }
-            return res.send(req.body);
         }
     }
 );
