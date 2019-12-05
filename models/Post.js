@@ -1,4 +1,3 @@
-/*jshint esversion: 9 */
 import mongoose from 'mongoose';
 
 const PostSchema = new mongoose.Schema({

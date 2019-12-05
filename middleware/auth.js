@@ -8,7 +8,7 @@ const auth = (req, res, next) => {
   if (!token) {
     return res
    	  .status(401)
-	  .json({ message: 'Missing authentication token. Autrhorization failed.' });
+	  .json({ message: 'Missing authentication token. Authorization failed.' });
   }
 	
   try {
