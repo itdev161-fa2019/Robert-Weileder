@@ -1,4 +1,3 @@
-/*jshint esversion: 6 */
 import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
