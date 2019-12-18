@@ -41,7 +41,7 @@ const Login = ({ authenticateUser }) => {
       localStorage.setItem('token', res.data.token);
       history.push('/');
 
-    } catch (error) {
+    } catch (error) { 
       // Clear user data
       localStorage.removeItem('token');
 

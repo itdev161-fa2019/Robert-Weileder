@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import config from 'config';
 import User from './models/User';
-import Post from './models/Post';
+import Game from './models/Game';
 import auth from './middleware/auth';
 
 
@@ -159,20 +159,32 @@ app.get('/api/auth', auth, async (req, res) => {
   }
 });
 
-// Post endpoints
+// Game endpoints
 /**
- * @route POST api/posts
- * @desc Create post
+ * @route GAME api/games
+ * @desc Create game
  */
 app.post(
-  '/api/posts',
+  '/api/games',
   [
     auth,
     [
-      check('title', 'Title test is required')
+      check('title', 'Title text is required')
         .not()
         .isEmpty(),
-      check('body', 'Body text is required')
+      check('platform', 'Platform text is required')
+        .not()
+        .isEmpty(),
+      check('developer', 'Developer text is required')
+        .not()
+        .isEmpty(),
+      check('genre', 'Genre text is required')
+        .not()
+        .isEmpty(),
+      check('rating', 'ESRB rating text is required')
+        .not()
+        .isEmpty(),
+      check('prodYear', 'Year produced text is required')
         .not()
         .isEmpty()
     ]
@@ -182,22 +194,27 @@ app.post(
     if (!errors.isEmpty()) {
       res.status(400).json({ errors: errors.array() });
     } else {
-      const { title, body } = req.body;
+      const { title, platform, developer, genre, rating, prodYear, comment } = req.body;
       try {
-        // Get the user who created the post
+        // Get the user who created the game
         const user = await User.findById(req.user.id);
 
-        // Create a new post
-        const post = new Post({
+        // Create a new game
+        const game = new Game({
           user: user.id,
           title: title,
-          body: body
+          platform: platform,
+          developer: developer,
+          genre: genre,
+          rating: rating,
+          prodYear: prodYear,
+          comment: comment
         });
 
         // Save to the db and return
-        await post.save();
+        await game.save();
 
-        res.json(post);
+        res.json(game);
       } catch (error) {
         console.error(error);
         res.status(500).send('Server error');
@@ -207,14 +224,14 @@ app.post(
 );
 
 /**
- * @route GET api/posts
- * @desc Get posts
+ * @route GET api/games
+ * @desc Get games
  */
-app.get('/api/posts', auth, async (req, res) => {
+app.get('/api/games', auth, async (req, res) => {
   try {
-    const posts = await Post.find().sort({ date: -1 });
+    const games = await Game.find().sort({ date: -1 });
         
-    res.json(posts);
+    res.json(games);
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
@@ -222,19 +239,19 @@ app.get('/api/posts', auth, async (req, res) => {
 });
 
 /**
- * @route GET api/posts/:id
- * @desc Get post
+ * @route GET api/games/:id
+ * @desc Get game
  */
-app.get('/api/posts/:id', auth, async (req, res) => {
+app.get('/api/games/:id', auth, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const game = await Game.findById(req.params.id);
       
-    // Make sure the post was found
-    if (!post) {
-      return res.status(404).json({ msg: 'Post not found' });
+    // Make sure the game was found
+    if (!game) {
+      return res.status(404).json({ msg: 'Game not found' });
     }
       
-    res.json(post);
+    res.json(game);
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
@@ -242,26 +259,26 @@ app.get('/api/posts/:id', auth, async (req, res) => {
 });
 
 /**
- * @route DELETE api/posts/:id
- * @desc Delete a post
+ * @route DELETE api/games/:id
+ * @desc Delete a game
  */
-app.delete('/api/posts/:id', auth, async (req, res) => {
+app.delete('/api/games/:id', auth, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const game = await Game.findById(req.params.id);
       
-    // Make sure the post was found
-    if (!post) {
+    // Make sure the game was found
+    if (!game) {
       return res.status(404).json({ msg: 'Post not found' });
     }
       
-    // Make sure the user created the post
-    if (post.user.toString() !== req.user.id) {
+    // Make sure the user created the game
+    if (game.user.toString() !== req.user.id) {
       return res.status(401).json({ msg: 'User not authorized' });
     }
       
-    await post.remove();
+    await game.remove();
       
-    res.json({ msg: 'Post removed' });
+    res.json({ msg: 'Game removed' });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
@@ -269,31 +286,37 @@ app.delete('/api/posts/:id', auth, async (req, res) => {
 });
 
 /**
- * @route PUT api/posts/:id
- * @desc Update a post
+ * @route PUT api/games/:id
+ * @desc Update a game
  */
-app.put('/api/posts/:id', auth, async (req, res) => {
+app.put('/api/games/:id', auth, async (req, res) => {
   try {
-    const { title, body } = req.body;
-    const post = await Post.findById(req.params.id);
+    const { title, platform, developer, genre, rating, prodYear, comment } = req.body;
+    const game = await Game.findById(req.params.id);
     
-    // Make sure the post was found
-    if (!post) {
-      return res.status(404).json({ msg: 'Post not found' });
+    // Make sure the game was found
+    if (!game) {
+      return res.status(404).json({ msg: 'game not found' });
     }
       
-    // Make sure the request user created the post
-    if (post.user.toString() !== req.user.id) {
+    // Make sure the request user created the game
+    if (game.user.toString() !== req.user.id) {
       return res.status(401).json({ msg: 'User not authorized' });
     }
       
-    // Update the post and return
-    post.title = title || post.title;
-    post.body = body || post.body;
+    // Update the game and return
+    game.title = title || game.title;
+    game.platform = platform || game.platform;
+    game.developer = developer || game.developer;
+    game.genre = genre || game.genre;
+    game.rating = rating || game.rating;
+    game.prodYear = prodYear || game.prodYear;
+    game.comment = comment || game.comment;
+    
       
-    await post.save();
+    await game.save();
       
-    res.json(post);
+    res.json(game);
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');

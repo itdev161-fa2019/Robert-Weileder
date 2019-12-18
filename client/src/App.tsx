@@ -4,15 +4,15 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import './App.css';
 import Register from './components/Register/Register';
 import Login from './components/Login/Login';
-import PostList from './components/PostList/PostList';
-import Post from './components/Post/Post';
-import CreatePost from './components/Post/CreatePost';
-import EditPost from './components/Post/EditPost';
+import GameList from './components/GameList/GameList';
+import Game from './components/Game/Game';
+import CreateGame from './components/Game/CreateGame';
+import EditGame from './components/Game/EditGame';
 
 class App extends React.Component {
   state = {
-    posts: [],
-    post: null,
+    games: [],
+    game: null,
     token: null,
     user: null
   };
@@ -67,10 +67,10 @@ class App extends React.Component {
         }
       };
       axios
-        .get('http://localhost:5000/api/posts', config)
+        .get('http://localhost:5000/api/games', config)
         .then(response => {
           this.setState({
-            posts: response.data
+            games: response.data
           });
         })
         .catch(error => {
@@ -85,14 +85,14 @@ class App extends React.Component {
     this.setState({ user: null, token: null });
   };
 
-  viewPost = post => {
-    console.log(`view ${post.title}`);
+  viewGame = game => {
+    console.log(`view ${game.title}`);
     this.setState({
-      post: post
+      game: game
     });
   };
 
-  deletePost = post => {
+  deleteGame = game => {
     const { token } = this.state;
 
     if (token) {
@@ -103,47 +103,47 @@ class App extends React.Component {
       };
 
       axios
-        .delete(`http://localhost:5000/api/posts/${post._id}`, config)
+        .delete(`http://localhost:5000/api/games/${game._id}`, config)
         .then(response => {
-          const newPosts = this.state.posts.filter(p => p._id !== post._id);
+          const newGames = this.state.games.filter(g => g._id !== game._id);
           this.setState({
-            posts: [...newPosts]
+            games: [...newGames]
           });
         })
         .catch(error => {
-          console.error(`Error deleting post: ${error}`);
+          console.error(`Error deleting game: ${error}`);
         });
     }
   };
 
-  editPost = post => {
+  editGame = game => {
     this.setState({
-      post: post
+      game: game
     });
   };
 
-  onPostCreated = post => {
-    const newPosts = [...this.state.posts, post];
+  onGameCreated = game => {
+    const newGames = [...this.state.games, game];
 
     this.setState({
-      posts: newPosts
+      Games: newGames
     });
   };
 
-  onPostUpdated = post => {
-    console.log('updated post: ', post);
-    const newPosts = [...this.state.posts];
-    const index = newPosts.findIndex(p => p._id === post._id);
+  onGameUpdated = game => {
+    console.log('updated game: ', game);
+    const newGames = [...this.state.games];
+    const index = newGames.findIndex(g => g._id === game._id);
 
-    newPosts[index] = post;
+    newGames[index] = game;
 
     this.setState({
-      posts: newPosts
+      games: newGames
     });
   };
 
   render() {
-    let { user, posts, post, token } = this.state;
+    let { user, games, game, token } = this.state;
     const authProps = {
       authenticateUser: this.authenticateUser
     }
@@ -152,14 +152,14 @@ class App extends React.Component {
         <Router>
             <div className="App">
                 <header className="App-header">
-                    <h1>GoodThings</h1>
+                    <h1>Video Game Reviews</h1>
                     <ul>
                         <li>
                             <Link to="/">Home</Link>
                         </li>
                         <li>
                           {user ? (
-                            <Link to="/new-post">New Post</Link>
+                            <Link to="/new-game">New Game</Link>
                           ) : (
                             <Link to="/register">Register</Link>
                           )}
@@ -181,28 +181,28 @@ class App extends React.Component {
                       {user ? (
                       <React.Fragment>
                         <div>Hello {user}!</div>
-                        <PostList 
-                          posts={posts}
-                          clickPost={this.viewPost}
-                          deletePost={this.deletePost}
-                          editPost={this.editPost}
+                        <GameList 
+                          games={games}
+                          clickGame={this.viewGame}
+                          deleteGame={this.deleteGame}
+                          editGame={this.editGame}
                         />
                       </React.Fragment> 
                     ) : (
                       <React.Fragment>Please Register or Login</React.Fragment>
                     )}
                     </Route>
-                    <Route path="/posts/:postId">
-                      <Post post={post} />
+                    <Route path="/games/:gameId">
+                      <Game game={game} />
                     </Route>
-                    <Route path="/new-post">
-                      <CreatePost token={token} onPostCreated={this.onPostCreated} />
+                    <Route path="/new-game">
+                      <CreateGame token={token} onGameCreated={this.onGameCreated} />
                     </Route>
-                    <Route path="/edit-post/:postId">
-                      <EditPost
-                        token={token}
-                        post={post}
-                        onPostUpdated={this.onPostUpdated}
+                    <Route path="/edit-game/:gameId">
+                      <EditGame 
+                        token={token} 
+                        game={game} 
+                        onGameUpdated={this.onGameUpdated} 
                       />
                     </Route>
                     <Route 

@@ -107,4 +107,4 @@ const Register = ({ authenticateUser }) => {
         )
     }
 
-export default Register
+export default Register;
